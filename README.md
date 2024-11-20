@@ -138,6 +138,28 @@ git commit -m "Ignore data folder and remove from Git tracking"
 git push origin main
 ```
 从此，data 文件夹将不再被 Git 跟踪，并不会推送到 GitHub。<br>
+
+**忽略 data.json 文件**<br>
+如果不希望 data.json 文件被推送到 GitHub，请按照以下步骤操作：<br>
+
+**创建或编辑 .gitignore 文件，添加以下内容**：
+
+```bash
+data.json
+```
+**移除已被 Git 跟踪的 data.json 文件**：
+
+```bash
+git rm -r --cached data.json
+```
+**提交更改并推送**：
+
+```bash
+git add .gitignore
+git commit -m "Ignore data.json and remove from Git tracking"
+git push origin main
+```
+从此，data.json 文件将不再被 Git 跟踪，并不会推送到 GitHub。<br>
 <br>
 小贴士<br>
 随时同步远程仓库：避免提交较大修改后才同步，这样会增加冲突概率。<br>
