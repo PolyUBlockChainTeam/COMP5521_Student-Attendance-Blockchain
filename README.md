@@ -40,7 +40,7 @@ http://localhost:4000
 ## 3. 代码管理与协作
 
 **Git 仓库地址**：
-https://github.com/liu-qingyuan/COMP5521_Student-Attendance-Blockchain
+https://github.com/PolyUBlockChainTeam/COMP5521_Student-Attendance-Blockchain.git
 
 **操作说明**：
 
