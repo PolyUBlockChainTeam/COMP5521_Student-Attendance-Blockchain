@@ -11,25 +11,46 @@ class Miner {
         //store the target difficulty by index
     static blockIndexToDifficultyMapping = new Map();
     constructor(blockchain, logLevel) {
+        const data = Miner.loadDataFromFile('data.json');
+        if (data) {
+            Miner.blockIndexToDifficultyMapping = data;
+        }
         this.blockchain = blockchain;
         this.logLevel = logLevel;
     }
-
+    // Write map data to a JSON file (append mode)
+    static writeDataToFile(filename) {
+        const existingData = Miner.loadDataFromFile(filename) || [];
+        const newData = Array.from(Miner.blockIndexToDifficultyMapping);
+        const combinedData = new Map([...existingData, ...newData]);
+        fs.writeFileSync(filename, JSON.stringify(Array.from(combinedData)));
+        console.log('Data appended to file.');
+}
+// Load map data from a JSON file
+    static loadDataFromFile(filename) {
+        try {
+            const data = fs.readFileSync(filename, 'utf8');
+            return new Map(JSON.parse(data));
+        } catch (err) {
+            console.error('Error loading data from file:', err);
+            return null;
+        }
+    }
     mine(rewardId,rewardAddress,operator) {
         let baseBlock = Miner.generateNextBlock(rewardId,rewardAddress, this.blockchain,operator);
         process.execArgv = R.reject((item) => item.includes('debug'), process.execArgv);
-
+        let Difficulty = Miner.dynamicDifficulty(this.blockchain);
         /* istanbul ignore next */
-        const thread = spawn(function (input, done) {
-            /*eslint-disable */
+        /*const thread = spawn(function (input, done) {
+            //eslint-disable
             require(input.__dirname + '/../util/consoleWrapper.js')('mine-worker', input.logLevel);
             const Block = require(input.__dirname + '/../blockchain/block');
             const Miner = require(input.__dirname);
-            /*eslint-enable */
+            //eslint-enable
 
             done(Miner.proveWorkFor(Block.fromJson(input.jsonBlock), input.difficulty));
-        });
-
+        });*/
+        const Block = require(__dirname + '/../blockchain/block');
         const transactionList = R.pipe(
             R.countBy(R.prop('type')),
             R.toString,
@@ -39,7 +60,7 @@ class Miner {
         )(baseBlock.transactions);
         console.info(`Mining a new block with ${baseBlock.transactions.length} (${transactionList}) transactions`);
 
-        const promise = thread.promise().then((result) => {
+        /*const promise = thread.promise().then((result) => {
             thread.kill();
             return result;
         });
@@ -51,7 +72,15 @@ class Miner {
             difficulty: this.blockchain.getDifficulty()
         });
 
-        return promise;
+        return promise;*/
+         return new Promise((resolve, reject) => {
+        try {
+            const result = Miner.proveWorkFor(Block.fromJson(baseBlock), Difficulty);
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
     }
 
     static generateNextBlock(rewardId,rewardAddress, blockchain ,operator) {
@@ -95,8 +124,7 @@ class Miner {
             transactions
         });
     }
-
-    /* istanbul ignore next */
+  /* istanbul ignore next */
     static proveWorkFor(jsonBlock, difficulty) {
         let blockDifficulty = null;
         let start = process.hrtime();
@@ -110,9 +138,64 @@ class Miner {
             block.nonce++;
             block.hash = block.toHash();
             blockDifficulty = block.getDifficulty();
-        } while (blockDifficulty >= difficulty);
-        console.info(`Block found: time '${process.hrtime(start)[0]} sec' dif '${difficulty}' hash '${block.hash}' nonce '${block.nonce}'`);
+} while (blockDifficulty >= difficulty);
+        //map the difficulty
+        //Miner.blockIndexToDifficultyMapping[block.index]=difficulty;
+        Miner.blockIndexToDifficultyMapping.set(block.index, difficulty);
+        Miner.writeDataToFile('data.json');
+        //console.info(`mapping index: ${block.index} mapping diff: ${} `);
+        console.info(`Block found: time '${process.hrtime(start)[0]} sec' bdiff '${blockDifficulty}'dif '${Miner.get_DifByindex(block.index)}' hash '${block.hash}' nonce '${block.nonce}'`);
         return block;
+    }
+    static get_DifByindex(passindex){
+        Miner.loadDataFromFile('data.json');
+        const dif = Miner.blockIndexToDifficultyMapping.get(passindex);
+          if (dif === undefined) {
+              const dif = Miner.blockIndexToDifficultyMapping.get(passindex-1);
+            console.warn(`Difficulty for index ${passindex} not found.`);
+        }
+        return dif;
+    }
+
+// Function to dynamically adjust the difficulty based on certain criteria
+    static dynamicDifficulty(blockchain) {
+        //const blocks = blockchain.getAllBlocks();
+        const difficultyAdjustmentInterval = Config.DIFFICULTY_ADJUSTMENT_INTERVAL; // Assuming this is defined in the Config
+
+        const latestBlock = blockchain.getLastBlock();
+       if(latestBlock.index ===0){
+        Miner.blockIndexToDifficultyMapping.set(latestBlock.index, latestBlock.getDifficulty());
+        Miner.writeDataToFile('data.json');
+        return Miner.get_DifByindex(latestBlock.index);
+            //return latestBlock.getDifficulty();
+        }
+         if (latestBlock.index % difficultyAdjustmentInterval ===0 && latestBlock.index !==0) {
+        //if (latestBlock.index >= difficultyAdjustmentInterval) {
+            return this.adjustedDifficulty(latestBlock, blockchain);
+     } else {
+             Miner.loadDataFromFile('data.json');
+            const dif = Miner.get_DifByindex(latestBlock.index);
+            if (dif === undefined) {
+                console.error(`Failed to retrieve difficulty for block index ${latestBlock.index}.`)};
+            return dif;
+        }
+    }
+
+// Helper function to compute adjusted difficulty
+    static adjustedDifficulty(latestBlock, blockchain) {
+        //let block = Block.fromJson(jsonBlock);
+        const prevAdjustmentBlock = blockchain.getBlockByIndex(latestBlock.index - Config.DIFFICULTY_ADJUSTMENT_INTERVAL);
+        const BLOCK_GENERATION_INTERVAL = Config.BLOCK_GENERATION_INTERVAL;
+        const timeExpected = BLOCK_GENERATION_INTERVAL * Config.DIFFICULTY_ADJUSTMENT_INTERVAL;
+        const timeTaken = latestBlock.timestamp - prevAdjustmentBlock.timestamp;
+
+        if (timeTaken < timeExpected) {
+            return Miner.get_DifByindex(prevAdjustmentBlock.index) + 1;
+        } else if (timeTaken > timeExpected ) {
+            return Miner.get_DifByindex(prevAdjustmentBlock.index) - 1;
+        } else {
+            return Miner.get_DifByindex(prevAdjustmentBlock.index);
+        }
     }
 }
 
