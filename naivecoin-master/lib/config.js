@@ -6,6 +6,10 @@ module.exports = {
     FEE_PER_TRANSACTION: 1,
     // INFO: Usually the limit is determined by block size (not quantity)
     TRANSACTIONS_PER_BLOCK: 2,
+        //生成间隔(s)
+    BLOCK_GENERATION_INTERVAL: 10,
+    //几个blocks后更新难度
+    DIFFICULTY_ADJUSTMENT_INTERVAL:10,
     genesisBlock: {
         index: 0,
         previousHash: '0',
