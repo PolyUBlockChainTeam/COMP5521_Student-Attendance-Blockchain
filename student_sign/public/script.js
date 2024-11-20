@@ -40,12 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // 用户已登录时，处理退出操作
             console.log('Logout button clicked');  // 调试信息
-            user=getUserFromCookies()
             deleteCookie('userId')
             deleteCookie('username')
             isLoggedIn = false;  // 更新登录状态
             btnLoginPopup.textContent = 'Login';  // 修改按钮为“Login”
             console.log('User logged out successfully');
+            // 刷新页面
+            window.location.reload();
         }
     });
 
