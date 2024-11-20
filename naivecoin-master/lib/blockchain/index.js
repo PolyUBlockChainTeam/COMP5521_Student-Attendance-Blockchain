@@ -96,25 +96,37 @@ class Blockchain {
     }
 
     replaceChain(newBlockchain) {
-        // It doesn't make sense to replace this blockchain by a smaller one
-        if (newBlockchain.length <= this.blocks.length) {
+        //It doesn't make sense to replace this blockchain by a smaller one
+       if (newBlockchain.length <= this.blocks.length) {
             console.error('Blockchain shorter than the current blockchain');
             throw new BlockchainAssertionError('Blockchain shorter than the current blockchain');
-        }
-
-        // Verify if the new blockchain is correct
+       }
+       // Verify if the new blockchain is correct
         this.checkChain(newBlockchain);
-
-        // Get the blocks that diverges from our blockchain
+        //choose the cumulative difficulty one
+         if (this.getAccumulatedDifficulty(newBlockchain) > this.getAccumulatedDifficulty(this.blocks)) {
+        console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
+                // Get the blocks that diverges from our blockchain
         console.info('Received blockchain is valid. Replacing current blockchain with received blockchain');
         let newBlocks = R.takeLast(newBlockchain.length - this.blocks.length, newBlockchain);
-
+        //let newBlocks = newBlockchain;
         // Add each new block to the blockchain
         R.forEach((block) => {
             this.addBlock(block, false);
         }, newBlocks);
 
         this.emitter.emit('blockchainReplaced', newBlocks);
+        } else {
+        console.log('Received blockchain invalid');
+        }
+    }
+
+    getAccumulatedDifficulty(receivedBlocks) {
+    return receivedBlocks.reduce(function(acc, block) {
+        // Call getDifficulty function to fetch the difficulty based on block index and raise it to the power of 2
+        const difficulty = Math.pow(this.getDifficulty(block.index), 2);
+        return acc + difficulty;
+    }, 0);
     }
 
     checkChain(blockchainToValidate) {
