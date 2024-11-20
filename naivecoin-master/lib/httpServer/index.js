@@ -237,6 +237,38 @@ class HttpServer {
             }
         });
 
+
+        this.app.post('/student/wallets/:walletId/certificates', (req, res) => {
+            let walletId = req.params.walletId;
+            const { eventid, type, secretKey } = req.body;
+            //let secretKey = req.body.secrekey;
+            let password = req.headers.password;
+            if (password == null) throw new HTTPError(401, 'Wallet\'s password is missing.');
+        
+            let address = operator.getAddressesForWallet(walletId)[0];
+        
+            //私钥校验
+            const keyPair = generateKeyPairFromSecret(secretKey); // 通过 secretKey 生成密钥对
+            const derivedAddress = toHex(keyPair.getPublic());   // 获取公钥并转为 hex 格式
+        
+            if (derivedAddress !== address) {
+                throw new HTTPError(400, 'Provided secretKey does not match the address private key.');
+            }
+        
+            let passwordHash = CryptoUtil.hash(password);
+            try {
+                if (!operator.checkWalletPassword(walletId, passwordHash)) throw new HTTPError(403, `Invalid password for wallet '${walletId}'`);
+                let newTransaction = operator.createTransaction(walletId,eventid,type,secretKey);
+                newTransaction.check();
+        
+                let transactionCreated = blockchain.addTransaction(Transaction.fromJson(newTransaction));
+                res.status(201).send(transactionCreated);
+            } catch (ex) {
+                if (ex instanceof ArgumentError || ex instanceof TransactionAssertionError) throw new HTTPError(400, ex.message, walletId, ex);
+                else throw ex;
+            }
+        });
+
         this.app.post('/student/wallets/:walletId/addresses', (req, res) => {
             let walletId = req.params.walletId;
             let password = req.headers.password;

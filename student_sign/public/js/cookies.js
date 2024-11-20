@@ -3,7 +3,7 @@ function setCookie(name, value, days) {
     console.log('name, value, days:', name, value, days);
     const date = new Date();
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));  // 计算过期时间
-    const expires = "expires=" + date.toUTCString();  // 格式化过期时间
+    const expires = "expires=" + date.toGMTString();  // 格式化过期时间
     // document.cookie = `${name}=${value};${expires};path=/;SameSite=None;Secure;HttpOnly`;  // 设置 SameSite 和 Secure
     document.cookie = `${name}=${value};${expires};path=/`;
     console.log('document.cookie:', document.cookie);
@@ -50,7 +50,9 @@ function getUserRole(userId) {
 }
 // 删除指定的 Cookie
 function deleteCookie(name) {
-    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";  // 设置过期时间为过去
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+    console.log('document.cookie:', document.cookie);
+    console.log('Cookie deleted');
 }
 // 检查 Cookies 中的用户信息，显示欢迎信息 并返回true/false
 function checkLoginStatus() {
@@ -58,7 +60,7 @@ function checkLoginStatus() {
     
     if (user) {
         // 显示用户信息
-        alert(`Welcome back, ${user.username} (ID: ${user.userId})`);
+        // alert(`Welcome back, ${user.username} (ID: ${user.userId})`);
         return true;
     } else {
         alert('Please log in.');

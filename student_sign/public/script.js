@@ -7,13 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLoginPopup = document.querySelector('.btnLogin-popup');
     const iconClose = document.querySelector('.icon-close');
 
-
-    // 给各个链接添加事件监听器，检查用户是否已登录
-    document.getElementById('attendanceLink').addEventListener('click', checkLoginStatus);
-    document.getElementById('miningLink').addEventListener('click', checkLoginStatus);
-    document.getElementById('attendanceRecordsLink').addEventListener('click', checkLoginStatus);
-    document.getElementById('balanceLink').addEventListener('click', checkLoginStatus);
-    document.getElementById('walletLink').addEventListener('click', checkLoginStatus);
+    // 登录状态标志
+    let isLoggedIn = checkLoginStatus();
+    console.log('isLoggedIn',isLoggedIn);  // 调试信息
+    if (!isLoggedIn) {
+        // 用户未登录时
+        btnLoginPopup.textContent = 'Login';  // 修改按钮为“Login”
+    } else {
+        // 用户已登录时
+        btnLoginPopup.textContent = 'Logout';  // 修改按钮为“Logout”
+        console.log('end:');
+    }
 
     // 注册链接点击事件
     registerLink.addEventListener('click', () => {
@@ -27,8 +31,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 显示登录表单
     btnLoginPopup.addEventListener('click', () => {
-        console.log('Login button clicked');  // 调试信息
         wrapper.classList.add('active-login');  // 显示登录表单
+
+        if (!isLoggedIn) {
+            // 用户未登录时，处理登录操作
+            console.log('Login button clicked');  // 调试信息
+            wrapper.classList.add('active-login');  // 显示登录表单
+        } else {
+            // 用户已登录时，处理退出操作
+            console.log('Logout button clicked');  // 调试信息
+            user=getUserFromCookies()
+            deleteCookie('userId')
+            deleteCookie('username')
+            isLoggedIn = false;  // 更新登录状态
+            btnLoginPopup.textContent = 'Login';  // 修改按钮为“Login”
+            console.log('User logged out successfully');
+        }
     });
 
     // 关闭按钮，关闭所有表单
@@ -159,6 +177,9 @@ loginForm.addEventListener('submit', function (e) {
             
             // 可以根据需要重定向或清空表单
             loginForm.reset();
+
+            // 刷新页面
+            window.location.reload();
         }
     })
     .catch(error => {
@@ -166,5 +187,3 @@ loginForm.addEventListener('submit', function (e) {
         alert('An error occurred during login.');
     });
 });
-
-

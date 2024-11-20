@@ -19,7 +19,7 @@
             <a href="attendance-records.html" id="attendanceRecordsLink">出勤记录</a>
             <a href="balance.html" id="balanceLink">余额</a>
             <a href="wallet.html" id="walletLink">连接钱包</a>
-            <button class="btnLogin-popup">Login</button>
+            <button id="btnLoginPopup" class="btnLogin-popup">Login</button>
         </nav>
     </header>
 
@@ -97,9 +97,10 @@
     <div class="attendance-records-box" id="attendance-recordsBox">
         <section class="attendance-records-header">
             <h1>出勤记录查询</h1>
-            <!-- 输入学生ID和周次查询信息 -->
-            <input type="text" id="attendance-studentIdInput" placeholder="请输入学生ID" />
-            <input type="number" id="attendance-weekNumInput" placeholder="请输入 weekNum (1-13)" min="1" max="13" />
+            <!-- 输入学生ID、周次或课程ID查询信息 -->
+            <input type="text" id="attendance-studentIdInput" placeholder="请输入学生ID (可选)" />
+            <input type="number" id="attendance-weekNumInput" placeholder="请输入 weekNum (1-13，可选)" min="1" max="13" />
+            <input type="text" id="attendance-eventIdInput" placeholder="请输入 Event ID (可选)" />
             <button class="attendance-records-query-btn" onclick="queryAttendance()">出勤查询</button>
         </section>
         <section class="shell">
@@ -120,6 +121,7 @@
             </table>
         </section>
     </div>
+    
     
     
     <script src="js/cookies.js"></script>
