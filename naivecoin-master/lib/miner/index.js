@@ -5,8 +5,11 @@ const CryptoUtil = require('../util/cryptoUtil');
 const Transaction = require('../blockchain/transaction');
 const Config = require('../config');
 const Operator = require("../operator");
+const fs = require('fs');
 
 class Miner {
+        //store the target difficulty by index
+    static blockIndexToDifficultyMapping = new Map();
     constructor(blockchain, logLevel) {
         this.blockchain = blockchain;
         this.logLevel = logLevel;
