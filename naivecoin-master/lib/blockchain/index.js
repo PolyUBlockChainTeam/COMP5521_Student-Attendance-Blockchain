@@ -9,6 +9,7 @@ const BlockAssertionError = require('./blockAssertionError');
 const BlockchainAssertionError = require('./blockchainAssertionError');
 const Config = require('../config');
 const Certificates = require('./cetificates');
+const Miner = require("../miner");
 
 // Database settings
 const BLOCKCHAIN_FILE = 'blocks.json';
@@ -62,7 +63,8 @@ class Blockchain {
 
     getDifficulty(index) {        
         // Calculates the difficulty based on the index since the difficulty value increases every X blocks.
-        return Config.pow.getDifficulty(this.blocks, index);        
+       // return Config.pow.getDifficulty(this.blocks, index);
+        return Miner.get_DifByindex(index);
     }
     
     getAllTransactions() {
