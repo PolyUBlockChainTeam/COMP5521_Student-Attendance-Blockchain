@@ -206,6 +206,7 @@ class Node {
             return null;
         } else { // Received blockchain is longer than current blockchain
             console.info('Received blockchain is longer than current blockchain');
+            console.info('Check Received blockchain is more difficult than current blockchain');
             this.blockchain.replaceChain(receivedBlocks);
             return true;
         }
