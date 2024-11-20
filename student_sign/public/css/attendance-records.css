@@ -168,7 +168,7 @@
 }
 
 
-#attendance-studentIdInput, #attendance-weekNumInput{
+#attendance-studentIdInput, #attendance-weekNumInput, #attendance-eventIdInput {
     width: 25%; /* 增大宽度，使输入框更加显眼 */
     padding: 8px 15px; /* 内边距，使文本更易阅读 */
     border: 1px solid rgba(255, 255, 255, 0.5); /* 半透明边框 */
@@ -183,7 +183,7 @@
 }
 
 /* 聚焦效果 */
-#attendance-studentIdInput:focus, #attendance-weekNumInput:focus {
+#attendance-studentIdInput:focus, #attendance-weekNumInput:focus, #attendance-eventIdInput:focus {
     background: rgba(0, 123, 255, 0.3); /* 聚焦时背景色 */
     border-color: rgba(0, 123, 255, 1); /* 聚焦时边框颜色 */
     transform: scale(1.02); /* 聚焦时稍微放大 */

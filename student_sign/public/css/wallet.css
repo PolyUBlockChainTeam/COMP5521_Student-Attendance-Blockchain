@@ -175,3 +175,32 @@
     max-height: calc(90% - 50px); /* 动态内容区域滚动限制 */
     overflow-y: auto; /* 纵向滚动 */
 }
+
+.wallet-inputs {
+    width: 70%;
+    display: flex; /* 使用flexbox */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    flex-direction: column; /* 垂直排列输入框 */
+}
+
+#walletPassword {
+    width: 50%; /* 增大宽度，使输入框更加显眼 */
+    padding: 8px 15px; /* 内边距，使文本更易阅读 */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 半透明边框 */
+    border-radius: 8px; /* 圆角 */
+    background: rgba(255, 255, 255, 0.2); /* 半透明背景 */
+    color: white; /* 字体颜色 */
+    font-size: 1rem; /* 字体大小 */
+    backdrop-filter: blur(10px); /* 背景模糊效果 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 平滑过渡效果 */
+    outline: none; /* 去除输入框的默认外边框 */
+}
+
+/* 聚焦效果 */
+#walletPassword:focus {
+    background: rgba(0, 123, 255, 0.3); /* 聚焦时背景色 */
+    border-color: rgba(0, 123, 255, 1); /* 聚焦时边框颜色 */
+    transform: scale(1.02); /* 聚焦时稍微放大 */
+}

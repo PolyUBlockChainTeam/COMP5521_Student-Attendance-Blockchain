@@ -104,12 +104,13 @@ function addKeyPairToUser(id, publicKey, privateKey) {
     return { message: 'New key pair added successfully!', keys: user.keys };
 }
 
-// 获取用户密钥对
 function getKeysByUserId(id) {
     const user = users.find(user => user.id === id);
+    console.log("user=",user)
     if (!user) {
         return { error: 'User not found.' };
     }
+    
     return user.keys;
 }
 
@@ -176,7 +177,7 @@ app.get('/users/:id/keys', (req, res) => {
     if (result.error) {
         res.status(404).send(result);
     } else {
-        res.status(200).send(result);
+        res.status(200).send({ keys: result });
     }
 });
 

@@ -94,17 +94,16 @@
 
 
 
-    <div class="attendance-records-box" id="attendance-recordsBox">
+    <div class="attendance-records-box">
         <section class="attendance-records-header">
-            <h1>出勤记录查询</h1>
-            <!-- 输入学生ID、周次或课程ID查询信息 -->
-            <input type="text" id="attendance-studentIdInput" placeholder="请输入学生ID (可选)" />
-            <input type="number" id="attendance-weekNumInput" placeholder="请输入 weekNum (1-13，可选)" min="1" max="13" />
-            <input type="text" id="attendance-eventIdInput" placeholder="请输入 Event ID (可选)" />
+            <h1>出勤记录查询1</h1>
+            <!-- 输入学生ID、周次查询信息 -->
+            <input type="text" id="attendance-studentIdInput" placeholder="请输入学生ID" />
+            <input type="number" id="attendance-weekNumInput" placeholder="请输入 weekNum" min="1" max="13" />
             <button class="attendance-records-query-btn" onclick="queryAttendance()">出勤查询</button>
         </section>
         <section class="shell">
-            <table class="attendance-records-table" id="attendance-recordsTable" border="1">
+            <table class="attendance-records-table" border="1">
                 <thead>
                     <tr>
                         <th>学生ID (Student ID)</th>
@@ -120,10 +119,31 @@
                 </tbody>
             </table>
         </section>
+        <section class="attendance-records-header">
+            <h1>出勤记录查询2</h1>
+            <!-- 输入课程ID查询信息 -->
+            <input type="text" id="attendance-eventIdInput" placeholder="请输入 eventId"/>
+            <button class="attendance-records-query-btn" onclick="queryAttendance2()">出勤查询</button>
+        </section>
+        <section class="shell">
+            <table class="attendance-records-table" border="1">
+                <thead>
+                    <tr>
+                        <th>学生ID (Student ID)</th>
+                        <th>课程 (Event ID)</th>
+                        <th>时间戳 (Timestamp)</th>
+                        <th>哈希值 (Hash)</th>
+                        <th>证书ID (Certificate ID)</th>
+                        <th>签名 (Signature)</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-recordsBody2">
+                    <!-- 出勤记录将显示在这里 -->
+                </tbody>
+            </table>
+        </section>
     </div>
-    
-    
-    
+
     <script src="js/cookies.js"></script>
     <script src="script.js"></script>
     <script src="js/attendance-records.js"></script>
