@@ -1,0 +1,206 @@
+.attendance-register-box { 
+    position: absolute;
+    width: 80%;
+    /* height: 600px; */
+    max-height: 80%; /* 限制最大高度为视口的80% */
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .5);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column; /* 控制内部元素上下排列 */
+    /* 超出部分可滚动 */
+    overflow: auto; 
+    margin-top: 80px;
+}
+
+
+.attendance-register-header {
+    width: 98%;
+    display: flex;
+    justify-content: space-between; /* 标题和按钮两端对齐 */
+    align-items: center; /* 垂直居中 */
+    padding-left: 10px;
+    background: rgba(255, 255, 255, 0.2); /* 半透明背景 */
+    backdrop-filter: blur(10px); /* 背景模糊效果 */
+    border-radius: 15px; /* 圆角 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 阴影 */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/* 标题样式 */
+.attendance-register-header h1 {
+    margin: 0; /* 去掉默认外边距 */
+    font-size: 1.5rem;
+    color: #333; /* 深色字体 */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* 文字阴影 */
+}
+
+/* 按钮样式 */
+.attendance-register-btn {
+    padding: 10px 20px; /* 按钮内边距 */
+    border: none; /* 去掉默认边框 */
+    border-radius: 5px; /* 按钮圆角 */
+    background: rgba(0, 123, 255, 0.7); /* 半透明按钮背景 */
+    color: white; /* 字体颜色 */
+    cursor: pointer; /* 鼠标样式 */
+    font-size: 1rem; /* 字体大小 */
+    font-weight: bold; /* 加粗字体 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 按钮阴影 */
+    transition: background 0.3s ease, transform 0.2s ease; /* 平滑过渡效果 */
+}
+
+/* 按钮悬停和点击效果 */
+.attendance-register-btn:hover {
+    background: rgba(0, 123, 255, 1); /* 悬停时不透明背景 */
+    transform: scale(1.05); /* 悬停时放大效果 */
+}
+
+.attendance-register-btn:active {
+    background: rgba(0, 100, 200, 1); /* 点击时颜色稍深 */
+    transform: scale(0.95); /* 点击时缩小效果 */
+}
+
+.shell {
+    width: 95%;
+    max-height: calc(90% - 25px);
+    background-color: transparent;
+    margin: 8px auto;
+    border-radius: 10px;
+    overflow: auto;
+    display: flex;
+}
+
+.attendance-register-table {
+    width: 100%; /* 表格宽度填充容器 */
+    height: 100%; /* 表格高度填充容器 */
+    border-collapse: collapse; /* 消除表格边距 */
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.2); /* 半透明背景 */
+    backdrop-filter: blur(10px); /* 背景模糊效果 */
+    border-radius: 15px; /* 圆角 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 阴影 */
+    color: #333; /* 字体颜色 */
+    font-size: 1rem; /* 字体大小 */
+    text-align: center;
+}
+
+/* 表头样式 */
+.attendance-register-table thead th {
+    background: transparent; /* 半透明蓝色背景 */
+    color: white; /* 字体颜色 */
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* 半透明边框 */
+    font-weight: bold;
+    text-align: center; /* 表头文字居中 */
+}
+
+/* 表格内容样式 */
+.attendance-register-table tbody td {
+    padding: 10px; /* 单元格内边距 */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* 半透明边框 */
+    color: #000; /* 黑色字体 */
+}
+
+/* 奇偶行背景颜色区分 */
+.attendance-register-table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.3); /* 奇数行半透明背景 */
+}
+
+.attendance-register-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.1); /* 偶数行更淡的背景 */
+}
+
+/* 鼠标悬停行效果 */
+.attendance-register-table tbody tr:hover {
+    background: rgba(100, 153, 209, 0.2); /* 悬停时的背景色 */
+    transition: background-color 0.3s; /* 平滑过渡 */
+}
+
+.attendance-register-table button:hover {
+    background: rgb(141, 180, 221); /* 悬停时按钮不透明 */
+}
+
+/* 滚动条透明样式 */
+.attendance-register-table tbody::-webkit-scrollbar {
+    width: 8px;
+}
+
+.attendance-register-table tbody::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.attendance-register-table tbody::-webkit-scrollbar-thumb {
+    background: rgba(0, 123, 255, 0.5);
+    border-radius: 10px;
+}
+
+/* 定义每一列的宽度比例 */
+
+.attendance-register-table th:nth-child(1), 
+.attendance-register-table td:nth-child(1) {
+    width: 15%;  /* id (签到请求的唯一标识符) */
+}
+
+.attendance-register-table th:nth-child(2),  
+.attendance-register-table td:nth-child(2) {
+    width: 20%;  /* hash (签到的哈希值) */
+}
+
+.attendance-register-table th:nth-child(3), 
+.attendance-register-table td:nth-child(3) {
+    width: 15%;  /* studentid (学生 ID) */
+}
+
+.attendance-register-table th:nth-child(4), 
+.attendance-register-table td:nth-child(4) {
+    width: 15%;  /* eventid (课程 ID) */
+}
+
+.attendance-register-table th:nth-child(5), 
+.attendance-register-table td:nth-child(5) {
+    width: 15%;  /* type (签到类型) */
+}
+
+.attendance-register-table th:nth-child(6), 
+.attendance-register-table td:nth-child(6) {
+    width: 15%;  /* timestamp (时间戳) */
+}
+
+
+/* 表格内容滚动支持 */
+.attendance-register-table tbody {
+    max-height: calc(90% - 50px); /* 动态内容区域滚动限制 */
+    overflow-y: auto; /* 纵向滚动 */
+}
+
+.attendance-register-inputs{
+    width: 90%
+}
+
+#studentPrivateKey, #eventID, #walletPassword {
+    width: 30%; /* 增大宽度，使输入框更加显眼 */
+    padding: 8px 15px; /* 内边距，使文本更易阅读 */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 半透明边框 */
+    border-radius: 8px; /* 圆角 */
+    background: rgba(255, 255, 255, 0.2); /* 半透明背景 */
+    color: white; /* 字体颜色 */
+    font-size: 1rem; /* 字体大小 */
+    backdrop-filter: blur(10px); /* 背景模糊效果 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 平滑过渡效果 */
+    outline: none; /* 去除输入框的默认外边框 */
+}
+
+/* 聚焦效果 */
+#studentPrivateKey:focus, #eventID:focus, #walletPassword:focus {
+    background: rgba(0, 123, 255, 0.3); /* 聚焦时背景色 */
+    border-color: rgba(0, 123, 255, 1); /* 聚焦时边框颜色 */
+    transform: scale(1.02); /* 聚焦时稍微放大 */
+}

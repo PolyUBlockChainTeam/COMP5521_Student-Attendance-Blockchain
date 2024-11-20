@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Blockchain</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/wallet.css">
+    <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+    <header>
+        <h2 class="logo">Logo</h2>
+        <nav class="navigation">
+            <a href="index.html">Home</a>
+            <a href="attendance-register.html" id="attendanceLink">签到</a>
+            <a href="mining.html" id="miningLink">挖矿</a>
+            <a href="attendance-records.html" id="attendanceRecordsLink">出勤记录</a>
+            <a href="balance.html" id="balanceLink">余额</a>
+            <a href="wallet.html" id="walletLink">连接钱包</a>
+            <button class="btnLogin-popup">Login</button>
+        </nav>
+    </header>
+
+    <div class="wrapper">
+        <span class="icon-close">
+            <ion-icon name="close"></ion-icon>
+        </span>
+
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form action="#" id="login-form">
+                <div class="input-box">
+                    <span class="icon">
+                        <ion-icon name="id-card"></ion-icon> <!-- 修改图标 -->
+                    </span>
+                    <input type="text" id="login-id" required placeholder=" ">
+                    <label for="login-id">StudentID/TeachID</label> <!-- 修改标签 -->
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <ion-icon name="lock-closed"></ion-icon>
+                    </span>
+                    <input type="password" id="login-password" required placeholder=" ">
+                    <label for="login-password">Password</label>
+                </div>
+                <div class="remember-forgot">
+                    <label for="login-remember"><input type="checkbox" id="login-remember"> Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link">Register</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <ion-icon name="person"></ion-icon>
+                    </span>
+                    <input type="text" id="register-username" required placeholder=" ">
+                    <label for="register-username">Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <ion-icon name="id-card"></ion-icon> <!-- 修改图标 -->
+                    </span>
+                    <input type="text" id="register-id" required placeholder=" ">
+                    <label for="register-id">StudentID/TeachID</label> <!-- 修改标签 -->
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <ion-icon name="lock-closed"></ion-icon>
+                    </span>
+                    <input type="password" id="register-password" required placeholder=" ">
+                    <label for="register-password">Password</label>
+                </div>
+                <div class="remember-forgot">
+                    <label for="register-terms"><input type="checkbox" id="register-terms"> I agree to the terms & conditions</label>
+                </div>
+                <button type="submit" class="btn">Register</button>
+                <div class="login-register">
+                    <p>Already have an account? <a href="#" class="login-link">Login</a></p>
+                </div>
+            </form>
+        </div>        
+    </div>
+
+
+
+
+    <div class="wallet-box" id="walletBox">
+        <section class="wallet-header">
+            <h1>挖矿器</h1>
+            <!-- 挖矿按钮 -->
+            <button class="wallet-gener-btn" onclick="mining()">开始挖矿</button>
+        </section>
+        <section class="shell">
+            <table class="wallet-table" id="walletTable" border="1">
+                <thead>
+                    <tr>
+                        <th>索引 (Index)</th>
+                        <th>上一个哈希值 (Previous Hash)</th>
+                        <th>时间戳 (Timestamp)</th>
+                        <th>哈希值 (Hash)</th>
+                        <th>随机数 (Nonce)</th>
+                    </tr>
+                </thead>
+                <tbody id="walletBody">
+                    <!-- 挖矿结果将显示在这里 -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script src="js/cookies.js"></script>
+    <script src="script.js"></script>
+    <script src="js/mining.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

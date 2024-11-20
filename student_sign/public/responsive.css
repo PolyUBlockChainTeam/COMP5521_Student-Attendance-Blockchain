@@ -1,0 +1,27 @@
+@media (max-width: 768px) {
+    body {
+        padding-top: 90px;
+    }
+
+    header {
+        padding: 30px 50px;
+    }
+
+    .navigation a {
+        font-size: 1.3em;
+        margin-left: 20px;
+    }
+
+    .navigation .btnLogin-popup {
+        width: 150px;
+        height: 60px;
+        font-size: 1.2em;
+    }
+
+    .navigation a::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 2px;
+    }
+}
