@@ -199,20 +199,20 @@ class Miner {
         const BLOCK_GENERATION_INTERVAL = Config.BLOCK_GENERATION_INTERVAL;
         const timeExpected = BLOCK_GENERATION_INTERVAL * Config.DIFFICULTY_ADJUSTMENT_INTERVAL;
         const timeTaken = latestBlock.timestamp - prevAdjustmentBlock.timestamp;
-        let dif=0;
+
         if (timeTaken < timeExpected) {
-            const lifted_dif = Miner.generateRandomNumericHash(16);
-            if (lifted_dif>Miner.get_DifByindex(prevAdjustmentBlock.index)){
-                dif = Miner.generateRandomNumericHash(16);
+            let lifted_dif = Miner.generateRandomNumericHash(16);
+            while(lifted_dif>Miner.get_DifByindex(prevAdjustmentBlock.index)){
+                lifted_dif = Miner.generateRandomNumericHash(16);
             }
-            return dif;
+            return lifted_dif;
             //return Miner.get_DifByindex(prevAdjustmentBlock.index) + 1;
         } else if (timeTaken > timeExpected ) {
-            const down_dif = Miner.generateRandomNumericHash(16);
-            if(down_dif<Miner.get_DifByindex(prevAdjustmentBlock.index)){
-                dif = Miner.generateRandomNumericHash(16);
+            let down_dif = Miner.generateRandomNumericHash(16);
+            while(down_dif<Miner.get_DifByindex(prevAdjustmentBlock.index)){
+                down_dif = Miner.generateRandomNumericHash(16);
             }
-            return dif;
+            return down_dif;
         } else {
             return Miner.get_DifByindex(prevAdjustmentBlock.index);
         }
