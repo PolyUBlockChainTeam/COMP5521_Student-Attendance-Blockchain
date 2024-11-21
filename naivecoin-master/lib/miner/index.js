@@ -157,6 +157,7 @@ class Miner {
         return dif;
     }
 
+
 // Function to dynamically adjust the difficulty based on certain criteria
     static dynamicDifficulty(blockchain) {
         //const blocks = blockchain.getAllBlocks();
@@ -175,12 +176,22 @@ class Miner {
      } else {
              Miner.loadDataFromFile('data.json');
             const dif = Miner.get_DifByindex(latestBlock.index);
+             //const dif = Miner.generateRandomNumericHash(16);
             if (dif === undefined) {
                 console.error(`Failed to retrieve difficulty for block index ${latestBlock.index}.`)};
             return dif;
         }
     }
+// 生成一个包含数字的随机哈希值的函数
+    static generateRandomNumericHash(length) {
+    var result = '';
 
+    for (var i = 0; i < length; i++) {
+        result += Math.floor(Math.random() * 10); // 生成 0 到 9 之间的随机数字
+    }
+    //console.log(result);
+    return result;
+}
 // Helper function to compute adjusted difficulty
     static adjustedDifficulty(latestBlock, blockchain) {
         //let block = Block.fromJson(jsonBlock);
@@ -188,11 +199,20 @@ class Miner {
         const BLOCK_GENERATION_INTERVAL = Config.BLOCK_GENERATION_INTERVAL;
         const timeExpected = BLOCK_GENERATION_INTERVAL * Config.DIFFICULTY_ADJUSTMENT_INTERVAL;
         const timeTaken = latestBlock.timestamp - prevAdjustmentBlock.timestamp;
-
+        let dif=0;
         if (timeTaken < timeExpected) {
-            return Miner.get_DifByindex(prevAdjustmentBlock.index) + 1;
+            const lifted_dif = Miner.generateRandomNumericHash(16);
+            if (lifted_dif>Miner.get_DifByindex(prevAdjustmentBlock.index)){
+                dif = Miner.generateRandomNumericHash(16);
+            }
+            return dif;
+            //return Miner.get_DifByindex(prevAdjustmentBlock.index) + 1;
         } else if (timeTaken > timeExpected ) {
-            return Miner.get_DifByindex(prevAdjustmentBlock.index) - 1;
+            const down_dif = Miner.generateRandomNumericHash(16);
+            if(down_dif<Miner.get_DifByindex(prevAdjustmentBlock.index)){
+                dif = Miner.generateRandomNumericHash(16);
+            }
+            return dif;
         } else {
             return Miner.get_DifByindex(prevAdjustmentBlock.index);
         }
