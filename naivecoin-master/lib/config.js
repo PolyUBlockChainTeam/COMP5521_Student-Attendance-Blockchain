@@ -7,9 +7,9 @@ module.exports = {
     // INFO: Usually the limit is determined by block size (not quantity)
     TRANSACTIONS_PER_BLOCK: 2,
         //生成间隔(s)
-    BLOCK_GENERATION_INTERVAL: 10,
+    BLOCK_GENERATION_INTERVAL: 1,
     //几个blocks后更新难度
-    DIFFICULTY_ADJUSTMENT_INTERVAL:10,
+    DIFFICULTY_ADJUSTMENT_INTERVAL:5,
     genesisBlock: {
         index: 0,
         previousHash: '0',
