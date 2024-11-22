@@ -1,22 +1,21 @@
-// 钱包functions
-let wallets = []; // 用于存储多个钱包
+// Wallet functions
+let wallets = []; // Array to store multiple wallets
 const ServerPORT = 4000;
 const user = getUserFromCookies();
 const userId = user.userId;
-fetchAndAddKeysToWallets(userId)
-
+fetchAndAddKeysToWallets(userId);
 
 function fetchAndAddKeysToWallets(userId) {
-    // 向node.js服务器发送 GET 请求以获取用户的所有密钥对
+    // Send a GET request to the Node.js server to retrieve all key pairs for the user
     fetch(`http://localhost:${ServerPORT}/users/${userId}/keys`)
         .then(response => response.json())
         .then(data => {
-            console.log('Received data:', data);  // 打印接收到的数据
+            console.log('Received data:', data); // Log received data
             if (data.error) {
                 console.error('Error:', data.error);
             } else {
                 const userKeys = data.keys;
-                console.log('userKeys:', userKeys);  // 打印 userKeys
+                console.log('userKeys:', userKeys); // Log user keys
                 if (Array.isArray(userKeys)) {
                     userKeys.forEach(keyPair => {
                         wallets.push({
@@ -36,10 +35,9 @@ function fetchAndAddKeysToWallets(userId) {
         });
 }
 
-
 async function generateKeys(userId, password) {
     try {
-        // 1. 创建钱包
+        // 1. Create a wallet
         const walletResponse = await fetch('http://localhost:3001/student/wallets', {
             method: 'POST',
             headers: {
@@ -58,7 +56,7 @@ async function generateKeys(userId, password) {
         const walletResult = await walletResponse.json();
         console.log('Wallet created successfully:', walletResult);
 
-        // 2. 创建地址
+        // 2. Create an address
         const addressResponse = await fetch(`http://localhost:3001/student/wallets/${userId}/addresses`, {
             method: 'POST',
             headers: {
@@ -74,7 +72,7 @@ async function generateKeys(userId, password) {
         const addressResult = await addressResponse.json();
         console.log('Address created successfully:', addressResult);
 
-        // 3. 获取密钥对
+        // 3. Retrieve key pairs
         const keypairResponse = await fetch(`http://localhost:3001/student/wallets/keypairs/${userId}`, {
             method: 'GET',
             headers: {
@@ -88,7 +86,7 @@ async function generateKeys(userId, password) {
         const keypairResult = await keypairResponse.json();
         console.log('Keypairs retrieved successfully:', keypairResult);
 
-        // 返回钱包、地址和密钥对的结果
+        // Return wallet, address, and keypair results
         return {
             wallet: walletResult,
             address: addressResult,
@@ -101,20 +99,21 @@ async function generateKeys(userId, password) {
     }
 }
 
-// 全局定义生成钱包的函数
+// Global function to generate a wallet
 async function generateWallet() {
     if (checkLoginStatus()) {
         const user = getUserFromCookies();
         const userId = user.userId;
         const username = user.username;
         if (!userId) return;
-        // 老师不能生成
+
+        // Teachers cannot generate wallets
         if (getUserRole(userId) === 'teacher') {
             alert("You are not a student!");
             return;
         }
 
-        // 从表单中获取钱包密码
+        // Get wallet password from form
         const walletPassword = document.getElementById('walletPassword').value;
         if (!walletPassword) {
             alert('Wallet Password is required!');
@@ -122,9 +121,9 @@ async function generateWallet() {
         }
 
         try {
-            // 生成钱包和密钥对
+            // Generate wallet and key pairs
             const keys = await generateKeys(userId, walletPassword);
-            console.log("keys.keypair.addresses:",keys.keypair.addresses)
+            console.log("keys.keypair.addresses:", keys.keypair.addresses);
             if (keys && keys.keypair && keys.keypair.addresses) {
                 // Get the last address in the array
                 const lastAddress = keys.keypair.addresses[keys.keypair.addresses.length - 1];
@@ -135,9 +134,7 @@ async function generateWallet() {
                     privateKey: lastAddress.secretKey // Assuming secretKey is used as private key
                 });
 
-                // console.log("publicKey:",lastAddress.publicKey)
-                // console.log("privateKey:",lastAddress.secretKey)
-                // 向node.js服务器发送 POST 请求
+                // Send a POST request to the Node.js server
                 fetch(`http://localhost:${ServerPORT}/users/${userId}/keys`, {
                     method: 'POST',
                     headers: {
@@ -172,18 +169,18 @@ async function generateWallet() {
     }
 }
 
-// 删除钱包的函数
+// Function to delete a wallet
 function deleteWallet(index) {
     if (index >= 0 && index < wallets.length) {
-        wallets.splice(index, 1); // 删除指定索引的钱包
-        updateWalletTable(); // 更新表格显示
+        wallets.splice(index, 1); // Remove the wallet at the specified index
+        updateWalletTable(); // Update the table display
     }
 }
 
-// 更新钱包表格显示
+// Function to update the wallet table display
 function updateWalletTable() {
     const walletBody = document.getElementById('walletBody');
-    walletBody.innerHTML = ''; // 清空表格
+    walletBody.innerHTML = ''; // Clear the table
 
     wallets.forEach((wallet, index) => {
         const row = document.createElement('tr');
@@ -194,10 +191,10 @@ function updateWalletTable() {
         privateKeyCell.textContent = wallet.privateKey;
         const actionCell = document.createElement('td');
 
-        // 添加删除按钮
+        // Add a delete button
         const deleteButton = document.createElement('button');
-        deleteButton.textContent = '删除';
-        deleteButton.onclick = () => deleteWallet(index); // 为删除按钮绑定特定钱包的索引
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = () => deleteWallet(index); // Bind delete button to a specific wallet index
 
         actionCell.appendChild(deleteButton);
 

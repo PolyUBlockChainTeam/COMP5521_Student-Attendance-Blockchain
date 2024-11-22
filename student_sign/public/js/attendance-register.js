@@ -1,41 +1,41 @@
-// 签到操作函数
+// Attendance operation function
 async function createAttendance() {
     const user = getUserFromCookies();
     const userId = user.userId;
     
     if (!userId) return;
-    // 老师不能生成
-    if (getUserRole(userId)=='teacher') {
-        alert("You are not student!")
+    // Teachers cannot generate attendance
+    if (getUserRole(userId) == 'teacher') {
+        alert("You are not a student!");
         return;
     }
 
-    const studentID = userId
+    const studentID = userId;
 
-    // 获取表单中的值
+    // Get values from the form
     const studentPrivateKey = document.getElementById('studentPrivateKey').value;
     const eventID = document.getElementById('eventID').value;
     const walletPassword = document.getElementById('walletPassword').value;
 
-    // 校验输入内容
+    // Validate input
     if (!studentPrivateKey || !eventID || !walletPassword) {
-        alert('请填写所有必填项！');
+        alert('Please fill in all required fields!');
         return;
     }
 
     try {
-        // 调用后端 API 签到
+        // Call the backend API to register attendance
         const response = await fetch(`http://localhost:3001/student/wallets/${studentID}/certificates`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'password': walletPassword, // 从表单获取密码
+                'password': walletPassword, // Get password from the form
             },
             body: JSON.stringify({
-                eventid: eventID, // 课程 ID
-                type: 'sign', // 签到类型
-                secretKey: studentPrivateKey, // 钱包密钥
+                eventid: eventID, // Event ID
+                type: 'sign', // Attendance type
+                secretKey: studentPrivateKey, // Wallet private key
             }),
         });
 
@@ -44,36 +44,36 @@ async function createAttendance() {
         }
 
         const result = await response.json();
-        console.log('签到成功:', result);
-        alert('签到成功！');
+        console.log('Attendance successful:', result);
+        alert('Attendance recorded successfully!');
 
-        // 可选择在前端更新签到表格内容
-        // 更新签到表格的示例代码
+        // Optionally update the attendance table on the frontend
+        // Example code for updating the attendance table
         updateAttendanceTable(result);
     } catch (error) {
-        console.error('签到失败:', error);
-        alert('签到失败，请稍后再试。');
+        console.error('Attendance failed:', error);
+        alert('Attendance failed, please try again later.');
     }
 }
 
-// 更新签到表格的函数（根据返回的数据更新签到记录）
+// Function to update the attendance table (updates attendance records based on returned data)
 function updateAttendanceTable(data) {
     const tableBody = document.getElementById('attendance-registerBody');
 
-    // 创建新的表格行
+    // Create a new table row
     const newRow = document.createElement('tr');
 
-    // 将返回的数据填充到表格行中
+    // Populate the table row with returned data
     newRow.innerHTML = `
-        <td>${data.id}</td>  <!-- 签到请求的唯一标识符 -->
-        <td>${data.hash}</td>  <!-- 签到的哈希值 -->
-        <td>${data.studentid}</td>  <!-- 学生 ID -->
-        <td>${data.eventid}</td>  <!-- 课程 ID -->
-        <td>${data.type}</td>  <!-- 签到类型 -->
-        <td>${new Date(data.timestamp * 1000).toLocaleString()}</td> <!-- 转换时间戳为可读日期 -->
-        <td>${data.signature}</td>  <!-- 签名 -->
+        <td>${data.id}</td>  <!-- Unique identifier for the attendance request -->
+        <td>${data.hash}</td>  <!-- Hash value of the attendance -->
+        <td>${data.studentid}</td>  <!-- Student ID -->
+        <td>${data.eventid}</td>  <!-- Event ID -->
+        <td>${data.type}</td>  <!-- Attendance type -->
+        <td>${new Date(data.timestamp * 1000).toLocaleString()}</td> <!-- Convert timestamp to readable date -->
+        <td>${data.signature}</td>  <!-- Signature -->
     `;
     
-    // 将新行添加到表格主体
+    // Add the new row to the table body
     tableBody.appendChild(newRow);
 }

@@ -1,29 +1,29 @@
-// 出勤记录查询函数
+// Function to query attendance records
 async function queryAttendance() {
-    // 获取当前用户是否登录
+    // Check if the current user is logged in
     const user = getUserFromCookies();
 
     if (!user) {
-        alert("请先登录！");
+        alert("Please log in first!");
         return;
     }
 
-    // 获取输入的学生ID和周次
+    // Get the input student ID and week number
     const studentId = document.getElementById('attendance-studentIdInput').value.trim();
     const weekNum = parseInt(document.getElementById('attendance-weekNumInput').value, 10);
 
     if (!studentId) {
-        alert("请输入学生ID！");
+        alert("Please enter the student ID!");
         return;
     }
 
     if (isNaN(weekNum) || weekNum < 1 || weekNum > 13) {
-        alert("请输入有效的周次 (1-13)！");
+        alert("Please enter a valid week number (1-13)!");
         return;
     }
 
     try {
-        // 调用后端 API 查询出勤记录
+        // Call the backend API to query attendance records
         const response = await fetch(
             `http://localhost:3001/teacher/queryWeeks?studentid=${studentId}&weekNum=${weekNum}`,
             {
@@ -35,58 +35,58 @@ async function queryAttendance() {
         );
 
         if (!response.ok) {
-            throw new Error(`查询失败: ${response.statusText}`);
+            throw new Error(`Query failed: ${response.statusText}`);
         }
 
         const result = await response.json();
-        console.log("查询结果:", result);
+        console.log("Query result:", result);
 
-        // 更新出勤表格
+        // Update the attendance table
         updateAttendanceRecordsTable(studentId, result);
     } catch (error) {
-        console.error("查询失败:", error);
-        alert("查询失败，请稍后再试。");
+        console.error("Query failed:", error);
+        alert("Query failed, please try again later.");
     }
 }
 
-// 更新出勤记录表格
+// Update the attendance records table
 function updateAttendanceRecordsTable(studentId, data) {
     const tableBody = document.getElementById('attendance-recordsBody');
-    tableBody.innerHTML = ''; // 清空表格内容
+    tableBody.innerHTML = ''; // Clear the table content
 
-    // 检查是否有记录
+    // Check if there are records
     if (data?.certifications?.length > 0) {
         data.certifications.forEach(cert => {
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
-                <td>${studentId}</td> <!-- 学生ID -->
-                <td>${cert.eventid}</td> <!-- 课程 -->
-                <td>${new Date(cert.timestamp * 1000).toLocaleString()}</td> <!-- 时间戳 -->
-                <td>${cert.hash}</td> <!-- 哈希值 -->
-                <td>${cert.id}</td> <!-- 证书ID -->
-                <td>${cert.signature}</td> <!-- 签名 -->
+                <td>${studentId}</td> <!-- Student ID -->
+                <td>${cert.eventid}</td> <!-- Course -->
+                <td>${new Date(cert.timestamp * 1000).toLocaleString()}</td> <!-- Timestamp -->
+                <td>${cert.hash}</td> <!-- Hash value -->
+                <td>${cert.id}</td> <!-- Certificate ID -->
+                <td>${cert.signature}</td> <!-- Signature -->
             `;
             tableBody.appendChild(newRow);
         });
     } else {
         const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">没有找到记录</td>`;
+        emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">No records found</td>`;
         tableBody.appendChild(emptyRow);
     }
 }
 
-// 出勤记录查询函数2
+// Function to query attendance records by event ID
 async function queryAttendance2() {
-    // 获取输入框中的课程 ID（eventId）
+    // Get the course ID (eventId) from the input field
     const eventId = document.getElementById('attendance-eventIdInput').value.trim();
 
     if (!eventId) {
-        alert("请输入课程 ID！");
+        alert("Please enter the course ID!");
         return;
     }
 
     try {
-        // 调用后端 API 查询课程出勤记录
+        // Call the backend API to query attendance records for the course
         const response = await fetch(
             `http://localhost:3001/teacher/queryClass?classid=${eventId}`,
             {
@@ -98,42 +98,42 @@ async function queryAttendance2() {
         );
 
         if (!response.ok) {
-            throw new Error(`查询失败: ${response.statusText}`);
+            throw new Error(`Query failed: ${response.statusText}`);
         }
 
         const result = await response.json();
-        console.log("查询结果:", result);
+        console.log("Query result:", result);
 
-        // 更新出勤表格
+        // Update the attendance table
         updateAttendanceRecordsTable2(eventId, result);
     } catch (error) {
-        console.error("查询失败:", error);
-        alert("查询失败，请稍后再试。");
+        console.error("Query failed:", error);
+        alert("Query failed, please try again later.");
     }
 }
 
-// 更新出勤记录表格
+// Update the attendance records table by event ID
 function updateAttendanceRecordsTable2(eventId, data) {
     const tableBody = document.getElementById('attendance-recordsBody2');
-    tableBody.innerHTML = ''; // 清空表格内容
+    tableBody.innerHTML = ''; // Clear the table content
 
-    // 检查是否有记录
+    // Check if there are records
     if (data?.certificates?.length > 0) {
         data.certificates.forEach(cert => {
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
-                <td>${cert.studentid}</td> <!-- 学生ID -->
-                <td>${eventId}</td> <!-- 课程 -->
-                <td>${new Date(cert.timestamp * 1000).toLocaleString()}</td> <!-- 时间戳 -->
-                <td>${cert.hash}</td> <!-- 哈希值 -->
-                <td>${cert.id}</td> <!-- 证书ID -->
-                <td>${cert.signature}</td> <!-- 签名 -->
+                <td>${cert.studentid}</td> <!-- Student ID -->
+                <td>${eventId}</td> <!-- Course -->
+                <td>${new Date(cert.timestamp * 1000).toLocaleString()}</td> <!-- Timestamp -->
+                <td>${cert.hash}</td> <!-- Hash value -->
+                <td>${cert.id}</td> <!-- Certificate ID -->
+                <td>${cert.signature}</td> <!-- Signature -->
             `;
             tableBody.appendChild(newRow);
         });
     } else {
         const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">没有找到记录</td>`;
+        emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">No records found</td>`;
         tableBody.appendChild(emptyRow);
     }
 }
