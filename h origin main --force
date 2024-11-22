@@ -1,0 +1,101 @@
+[33mcommit 312d924e29ee76b08a3bead11384a1dff464ce33[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Thu Nov 21 11:09:38 2024 +0800
+
+    change
+
+[33mcommit cafca4c73a5158106cbf63f059811e14c4ead340[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Thu Nov 21 02:35:08 2024 +0800
+
+    老子又TM改代码我燥
+
+[33mcommit db6e217bf05e9ccfc358ac515cd0540bcbb8fb22[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Thu Nov 21 02:32:14 2024 +0800
+
+    Ignore data folder and remove from Git tracking
+
+[33mcommit 5c9152f90a4a95ce07968dcd886d5eae70b52b69[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Thu Nov 21 02:29:06 2024 +0800
+
+    老子又TM改代码我燥
+
+[33mcommit 8934603970ca2e36cfe19adb9aaf619e2f9c3318[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Thu Nov 21 02:26:42 2024 +0800
+
+    老子又TM改代码我燥
+
+[33mcommit 815f37dfb911cd77a71c6d095b66bd03a34060c3[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Thu Nov 21 01:57:10 2024 +0800
+
+    readme update
+
+[33mcommit 2ea5189386aba191113d8bf54a4f547f07f60065[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Thu Nov 21 01:49:07 2024 +0800
+
+    前端完成
+
+[33mcommit 2090c6635885190a264b5bfdf072271d4b7ebd04[m
+Author: Ewannafly <945375680@qq.com>
+Date:   Thu Nov 21 00:27:20 2024 +0800
+
+    node/index.js replacechain update
+
+[33mcommit b392cb6885f142458b650e0fd53ca813e860ccb2[m
+Author: Ewannafly <945375680@qq.com>
+Date:   Thu Nov 21 00:21:53 2024 +0800
+
+    blockchain/index.js replacechain update
+
+[33mcommit ef7a9f9ebac4aba8936cbe88a048c5d7791a5722[m
+Author: Ewannafly <945375680@qq.com>
+Date:   Thu Nov 21 00:15:54 2024 +0800
+
+    blockchain/index.js getdifficulty update
+
+[33mcommit 3dc8e2a4452736410bac61b27fba3fdafbd63548[m
+Author: Ewannafly <945375680@qq.com>
+Date:   Thu Nov 21 00:10:18 2024 +0800
+
+    miner/index.js large change
+
+[33mcommit 5f2d6d7b978ad0d1c20b7561a86746f55af20306[m
+Author: Ewannafly <945375680@qq.com>
+Date:   Thu Nov 21 00:02:34 2024 +0800
+
+    Test miner/index.js little update
+
+[33mcommit 6acddf7a1ac075ce6ffaea94b9dcaa2264ffcebd[m
+Author: Ewannafly <90020578+Ewannafly@users.noreply.github.com>
+Date:   Wed Nov 20 22:59:15 2024 +0800
+
+    Update config.js
+
+[33mcommit 6c84ad15a4f70bed9766ac0d6c1bc5991aa05789[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Wed Nov 20 22:50:13 2024 +0800
+
+    Adding logout
+
+[33mcommit 305200ae951a5a922604f72225f583bd338ac342[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Wed Nov 20 21:10:15 2024 +0800
+
+    Ignore data folder and remove from Git tracking
+
+[33mcommit a783126b16a5afdbe2edfb3d4201fbe2dad9d1b1[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Wed Nov 20 21:08:13 2024 +0800
+
+    Initial commit
+
+[33mcommit 9eed5b32b19c69d94918dd6abb7258fac30f4b01[m
+Author: Liu Qingyuan <2981185462@qq.com>
+Date:   Wed Nov 20 21:03:19 2024 +0800
+
+    Initial commit
