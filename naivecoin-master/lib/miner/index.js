@@ -189,6 +189,7 @@ class Miner {
     for (var i = 0; i < length; i++) {
         result += Math.floor(Math.random() * 10); // 生成 0 到 9 之间的随机数字
     }
+    result =  parseInt(result, 16);
     //console.log(result);
     return result;
 }
@@ -199,21 +200,25 @@ class Miner {
         const BLOCK_GENERATION_INTERVAL = Config.BLOCK_GENERATION_INTERVAL;
         const timeExpected = BLOCK_GENERATION_INTERVAL * Config.DIFFICULTY_ADJUSTMENT_INTERVAL;
         const timeTaken = latestBlock.timestamp - prevAdjustmentBlock.timestamp;
+       console.log(`actually timetaken: ${timeTaken}.`);
 
         if (timeTaken < timeExpected) {
-            let lifted_dif = Miner.generateRandomNumericHash(16);
+            let lifted_dif = Miner.generateRandomNumericHash(14);
             while(lifted_dif>Miner.get_DifByindex(prevAdjustmentBlock.index)){
-                lifted_dif = Miner.generateRandomNumericHash(16);
+                lifted_dif = Miner.generateRandomNumericHash(14);
             }
+            console.log('lif');
             return lifted_dif;
             //return Miner.get_DifByindex(prevAdjustmentBlock.index) + 1;
         } else if (timeTaken > timeExpected ) {
-            let down_dif = Miner.generateRandomNumericHash(16);
+            let down_dif = Miner.generateRandomNumericHash(14);
             while(down_dif<Miner.get_DifByindex(prevAdjustmentBlock.index)){
-                down_dif = Miner.generateRandomNumericHash(16);
+                down_dif = Miner.generateRandomNumericHash(14);
             }
+            console.log('down');
             return down_dif;
         } else {
+            console.log('remain');
             return Miner.get_DifByindex(prevAdjustmentBlock.index);
         }
     }
