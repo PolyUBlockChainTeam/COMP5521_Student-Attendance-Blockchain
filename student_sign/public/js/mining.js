@@ -1,19 +1,19 @@
-// 挖矿操作函数
+// Function to perform mining operation
 async function mining() {
-    const user = getUserFromCookies();  // 获取当前用户
+    const user = getUserFromCookies();  // Get the current user
     const userId = user ? user.userId : null;
-    
+
     if (!userId) return;
-    // 老师不能生成
-    if (getUserRole(userId)=='teacher') {
-        alert("You are not student!")
+    // Teachers cannot mine
+    if (getUserRole(userId) == 'teacher') {
+        alert("You are not a student!");
         return;
     }
 
-    const studentID = userId
+    const studentID = userId;
 
     try {
-        // 调用后端 API 开始挖矿
+        // Call the backend API to start mining
         const response = await fetch('http://localhost:3001/miner/mine', {
             method: 'POST',
             headers: {
@@ -21,7 +21,7 @@ async function mining() {
                 'Accept': 'application/json',
             },
             body: JSON.stringify({
-                rewardId: studentID,  // 传入studentID进行挖矿
+                rewardId: studentID,  // Pass the studentID for mining
             }),
         });
 
@@ -29,34 +29,34 @@ async function mining() {
             throw new Error(`Error: ${response.statusText}`);
         }
 
-        const result = await response.json();  // 获取挖矿结果
-        console.log('挖矿成功:', result);
-        alert('挖矿成功！');
+        const result = await response.json();  // Get the mining result
+        console.log('Mining successful:', result);
+        alert('Mining successful!');
 
-        // 更新钱包表格
+        // Update the wallet table
         updateWalletTable(result);
     } catch (error) {
-        console.error('挖矿失败:', error);
-        alert('挖矿失败，请稍后再试。');
+        console.error('Mining failed:', error);
+        alert('Mining failed. Please try again later.');
     }
 }
 
-// 更新钱包表格的函数（根据返回的数据更新挖矿记录）
+// Function to update the wallet table with mining records
 function updateWalletTable(data) {
     const tableBody = document.getElementById('walletBody');
 
-    // 创建新的表格行
+    // Create a new table row
     const newRow = document.createElement('tr');
 
-    // 将返回的数据填充到表格行中
+    // Fill the table row with the returned data
     newRow.innerHTML = `
-        <td>${data.index}</td>  <!-- 索引 (Index) -->
-        <td>${data.previousHash}</td>  <!-- 上一个哈希值 (Previous Hash) -->
-        <td>${new Date(data.timestamp * 1000).toLocaleString()}</td> <!-- 时间戳 (Timestamp) -->
-        <td>${data.hash}</td>  <!-- 哈希值 (Hash) -->
-        <td>${data.nonce}</td>  <!-- 随机数 (Nonce) -->
+        <td>${data.index}</td>  <!-- Index -->
+        <td>${data.previousHash}</td>  <!-- Previous Hash -->
+        <td>${new Date(data.timestamp * 1000).toLocaleString()}</td> <!-- Timestamp -->
+        <td>${data.hash}</td>  <!-- Hash -->
+        <td>${data.nonce}</td>  <!-- Nonce -->
     `;
-    
-    // 将新行添加到表格主体
+
+    // Append the new row to the table body
     tableBody.appendChild(newRow);
 }
