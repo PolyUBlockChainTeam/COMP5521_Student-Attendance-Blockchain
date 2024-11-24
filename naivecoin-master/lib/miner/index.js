@@ -199,7 +199,7 @@ class Miner {
         const prevAdjustmentBlock = blockchain.getBlockByIndex(latestBlock.index - Config.DIFFICULTY_ADJUSTMENT_INTERVAL);
         const BLOCK_GENERATION_INTERVAL = Config.BLOCK_GENERATION_INTERVAL;
         const timeExpected = BLOCK_GENERATION_INTERVAL * Config.DIFFICULTY_ADJUSTMENT_INTERVAL;
-        const timeTaken = latestBlock.timestamp - prevAdjustmentBlock.timestamp;
+        const timeTaken = (latestBlock.timestamp - prevAdjustmentBlock.timestamp)/1000;
        console.log(`actually timetaken: ${timeTaken}.`);
 
         if (timeTaken < timeExpected) {
