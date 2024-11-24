@@ -95,7 +95,9 @@ class Blockchain {
         return R.find(R.compose(R.find(R.propEq('id', certificateId)), R.prop('certificates')), this.blocks);
     }
 
-    replaceChain(newBlockchain) {
+   replaceChain(newBlockchain) {
+        let difornew = 0;
+        let difornow = 0;
         //It doesn't make sense to replace this blockchain by a smaller one
        if (newBlockchain.length <= this.blocks.length) {
             console.error('Blockchain shorter than the current blockchain');
@@ -103,8 +105,22 @@ class Blockchain {
        }
        // Verify if the new blockchain is correct
         this.checkChain(newBlockchain);
+       //avoid length = 1 and have no difficulty data.json yet
+       if(newBlockchain.length==1){
+           console.log('difornew');
+           difornew = 0;
+       }else{
+           difornew = this.getAccumulatedDifficulty(newBlockchain);
+       }
+
+       if(this.blocks.length==1){
+           console.log('difornow');
+           difornow = 0;
+       }else{
+           difornow = this.getAccumulatedDifficulty(this.blocks);
+       }
         //choose the cumulative difficulty one
-         if (this.getAccumulatedDifficulty(newBlockchain) > this.getAccumulatedDifficulty(this.blocks)) {
+         if (difornew >difornow ) {
         console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
                 // Get the blocks that diverges from our blockchain
         console.info('Received blockchain is valid. Replacing current blockchain with received blockchain');
