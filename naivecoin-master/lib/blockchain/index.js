@@ -95,6 +95,7 @@ class Blockchain {
         return R.find(R.compose(R.find(R.propEq('id', certificateId)), R.prop('certificates')), this.blocks);
     }
 
+  //replace the original one
    replaceChain(newBlockchain) {
         let difornew = 0;
         let difornow = 0;
@@ -104,7 +105,7 @@ class Blockchain {
             throw new BlockchainAssertionError('Blockchain shorter than the current blockchain');
        }
        // Verify if the new blockchain is correct
-        this.checkChain(newBlockchain);
+        //this.checkChain(newBlockchain);
        //avoid length = 1 and have no difficulty data.json yet
        if(newBlockchain.length==1){
            console.log('difornew');
@@ -121,9 +122,10 @@ class Blockchain {
        }
         //choose the cumulative difficulty one
          if (difornew >difornow ) {
+       //if(newBlockchain.length>this.blocks.length){
         console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
                 // Get the blocks that diverges from our blockchain
-        console.info('Received blockchain is valid. Replacing current blockchain with received blockchain');
+        //console.info('Received blockchain is valid. Replacing current blockchain with received blockchain');
         let newBlocks = R.takeLast(newBlockchain.length - this.blocks.length, newBlockchain);
         //let newBlocks = newBlockchain;
         // Add each new block to the blockchain
@@ -138,9 +140,11 @@ class Blockchain {
     }
 
     getAccumulatedDifficulty(receivedBlocks) {
+
     return receivedBlocks.reduce(function(acc, block) {
         // Call getDifficulty function to fetch the difficulty based on block index and raise it to the power of 2
-        const difficulty = Math.pow(this.getDifficulty(block.index), 2);
+        //console.log(receivedBlocks.length);
+        const difficulty = Math.pow(Miner.get_DifByindex(block.index), 2);
         return acc + difficulty;
     }, 0);
     }
