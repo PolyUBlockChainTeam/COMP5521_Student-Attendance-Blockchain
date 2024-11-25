@@ -4,13 +4,13 @@ const Block = require('../blockchain/block');
 const CryptoUtil = require('../util/cryptoUtil');
 const Transaction = require('../blockchain/transaction');
 const Config = require('../config');
-const Operator = require("../operator");
 const fs = require('fs');
 
 class Miner {
-        //store the target difficulty by index
+     //store the target difficulty by index
     static blockIndexToDifficultyMapping = new Map();
-    constructor(blockchain, logLevel) {
+
+    constructor(blockchain, logLevel,dbName) {
         const data = Miner.loadDataFromFile('data.json');
         if (data) {
             Miner.blockIndexToDifficultyMapping = data;
@@ -36,28 +36,29 @@ class Miner {
             return null;
         }
     }
-    mine(rewardId,rewardAddress,operator) {
-        let baseBlock = Miner.generateNextBlock(rewardId,rewardAddress, this.blockchain,operator);
+    mine(rewardAddress, feeAddress) {
+        let baseBlock = Miner.generateNextBlock(rewardAddress, feeAddress, this.blockchain);
         process.execArgv = R.reject((item) => item.includes('debug'), process.execArgv);
         let Difficulty = Miner.dynamicDifficulty(this.blockchain);
         /* istanbul ignore next */
-        /*const thread = spawn(function (input, done) {
+      /* const thread = spawn(function (input, done) {
             //eslint-disable
             require(input.__dirname + '/../util/consoleWrapper.js')('mine-worker', input.logLevel);
             const Block = require(input.__dirname + '/../blockchain/block');
             const Miner = require(input.__dirname);
-            //eslint-enable
+            //*eslint-enable
 
             done(Miner.proveWorkFor(Block.fromJson(input.jsonBlock), input.difficulty));
         });*/
         const Block = require(__dirname + '/../blockchain/block');
-        const transactionList = R.pipe(
+   const transactionList = R.pipe(
             R.countBy(R.prop('type')),
             R.toString,
             R.replace('{', ''),
             R.replace('}', ''),
             R.replace(/"/g, '')
         )(baseBlock.transactions);
+
         console.info(`Mining a new block with ${baseBlock.transactions.length} (${transactionList}) transactions`);
 
         /*const promise = thread.promise().then((result) => {
@@ -69,11 +70,11 @@ class Miner {
             __dirname: __dirname,
             logLevel: this.logLevel,
             jsonBlock: baseBlock,
-            difficulty: this.blockchain.getDifficulty()
+            difficulty: Difficulty
         });
 
         return promise;*/
-         return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
         try {
             const result = Miner.proveWorkFor(Block.fromJson(baseBlock), Difficulty);
             resolve(result);
@@ -82,8 +83,7 @@ class Miner {
         }
     });
     }
-
-    static generateNextBlock(rewardId,rewardAddress, blockchain ,operator) {
+static generateNextBlock(rewardAddress, feeAddress, blockchain) {
         const previousBlock = blockchain.getLastBlock();
         const index = previousBlock.index + 1;
         const previousHash = previousBlock.hash;
@@ -91,32 +91,94 @@ class Miner {
         const blocks = blockchain.getAllBlocks();
         const candidateTransactions = blockchain.transactions;
         const transactionsInBlocks = R.flatten(R.map(R.prop('transactions'), blocks));
-        //const inputTransactionsInTransaction = R.compose(R.flatten, R.map(R.compose(R.prop('inputs'), R.prop('data'))));
-        // Select transactions that can be mined         
+        const inputTransactionsInTransaction = R.compose(R.flatten, R.map(R.compose(R.prop('inputs'), R.prop('data'))));
+
+        // Select transactions that can be mined
         let rejectedTransactions = [];
         let selectedTransactions = [];
+        R.forEach((transaction) => {
+            let negativeOutputsFound = 0;
+            let i = 0;
+            let outputsLen = transaction.data.outputs.length;
 
-        R.forEach(transaction => {
-            try {
-                transaction.verifySignature(rewardAddress); // 验证签名
-                selectedTransactions.push(transaction);
-            } catch (err) {
-                console.error(`Invalid transaction rejected: ${transaction.id}`, err.message);
+            // Check for negative outputs (avoiding negative transactions or 'stealing')
+            for (i = 0; i < outputsLen; i++) {
+                if (transaction.data.outputs[i].amount < 0) {
+                    negativeOutputsFound++;
+                }
+            }
+// Check if any of the inputs is found in the selectedTransactions or in the blockchain
+            let transactionInputFoundAnywhere = R.map((input) => {
+                let findInputTransactionInTransactionList = R.find(
+                    R.whereEq({
+                        'transaction': input.transaction,
+                        'index': input.index
+                    }));
+
+                // Find the candidate transaction in the selected transaction list (avoiding double spending)
+                let wasItFoundInSelectedTransactions = R.not(R.isNil(findInputTransactionInTransactionList(inputTransactionsInTransaction(selectedTransactions))));
+
+                // Find the candidate transaction in the blockchain (avoiding mining invalid transactions)
+                let wasItFoundInBlocks = R.not(R.isNil(findInputTransactionInTransactionList(inputTransactionsInTransaction(transactionsInBlocks))));
+
+                return wasItFoundInSelectedTransactions || wasItFoundInBlocks;
+            }, transaction.data.inputs);
+if (R.all(R.equals(false), transactionInputFoundAnywhere)) {
+                if (transaction.type === 'regular' && negativeOutputsFound === 0) {
+                    selectedTransactions.push(transaction);
+                } else if (transaction.type === 'reward') {
+                    selectedTransactions.push(transaction);
+                } else if (negativeOutputsFound > 0) {
+                    rejectedTransactions.push(transaction);
+                }
+            } else {
                 rejectedTransactions.push(transaction);
             }
-        },candidateTransactions);
-
-        // if (selectedTransactions.length === 0){
-        //     alert("Mine Error");
-        //     return ;
-        // }
-
+        }, candidateTransactions);
 
         console.info(`Selected ${selectedTransactions.length} candidate transactions with ${rejectedTransactions.length} being rejected.`);
-        let transactions = selectedTransactions;
 
-        operator.AddBalanceForAddress(rewardId,Config.MINING_REWARD);
-        return Block.fromJson({
+        // Get the first two avaliable transactions, if there aren't TRANSACTIONS_PER_BLOCK, it's empty
+        let transactions = R.defaultTo([], R.take(Config.TRANSACTIONS_PER_BLOCK, selectedTransactions));
+// Add fee transaction (1 satoshi per transaction)
+        if (transactions.length > 0) {
+            let feeTransaction = Transaction.fromJson({
+                id: CryptoUtil.randomId(64),
+                hash: null,
+                type: 'fee',
+                data: {
+                    inputs: [],
+                    outputs: [
+                        {
+                            amount: Config.FEE_PER_TRANSACTION * transactions.length, // satoshis format
+                            address: feeAddress, // INFO: Usually here is a locking script (to check who and when this transaction output can be used), in this case it's a simple destination address
+                        }
+                    ]
+                }
+            });
+
+            transactions.push(feeTransaction);
+        }
+// Add reward transaction of 50 coins
+        if (rewardAddress != null) {
+            let rewardTransaction = Transaction.fromJson({
+                id: CryptoUtil.randomId(64),
+                hash: null,
+                type: 'reward',
+                data: {
+                    inputs: [],
+                    outputs: [
+                        {
+                            amount: Config.MINING_REWARD, // satoshis format
+                            address: rewardAddress, // INFO: Usually here is a locking script (to check who and when this transaction output can be used), in this case it's a simple destination address
+                        }
+                    ]
+                }
+            });
+
+            transactions.push(rewardTransaction);
+        }
+return Block.fromJson({
             index,
             nonce: 0,
             previousHash,
@@ -124,7 +186,8 @@ class Miner {
             transactions
         });
     }
-  /* istanbul ignore next */
+
+    /* istanbul ignore next */
     static proveWorkFor(jsonBlock, difficulty) {
         let blockDifficulty = null;
         let start = process.hrtime();
@@ -151,12 +214,11 @@ class Miner {
         Miner.loadDataFromFile('data.json');
         const dif = Miner.blockIndexToDifficultyMapping.get(passindex);
           if (dif === undefined) {
-              const dif = Miner.blockIndexToDifficultyMapping.get(passindex-1);
+              const dif = Miner.blockIndexToDifficultyMapping.get(passindex);
             console.warn(`Difficulty for index ${passindex} not found.`);
         }
         return dif;
     }
-
 
 // Function to dynamically adjust the difficulty based on certain criteria
     static dynamicDifficulty(blockchain) {
@@ -200,14 +262,13 @@ class Miner {
         const BLOCK_GENERATION_INTERVAL = Config.BLOCK_GENERATION_INTERVAL;
         const timeExpected = BLOCK_GENERATION_INTERVAL * Config.DIFFICULTY_ADJUSTMENT_INTERVAL;
         const timeTaken = (latestBlock.timestamp - prevAdjustmentBlock.timestamp)/1000;
-       console.log(`actually timetaken: ${timeTaken}.`);
-
+        console.log(timeTaken);
         if (timeTaken < timeExpected) {
             let lifted_dif = Miner.generateRandomNumericHash(14);
             while(lifted_dif>Miner.get_DifByindex(prevAdjustmentBlock.index)){
                 lifted_dif = Miner.generateRandomNumericHash(14);
             }
-            console.log('lif');
+            console.log('up');
             return lifted_dif;
             //return Miner.get_DifByindex(prevAdjustmentBlock.index) + 1;
         } else if (timeTaken > timeExpected ) {
@@ -218,10 +279,11 @@ class Miner {
             console.log('down');
             return down_dif;
         } else {
-            console.log('remain');
+            console.log('remain')
             return Miner.get_DifByindex(prevAdjustmentBlock.index);
         }
     }
 }
+
 
 module.exports = Miner;
